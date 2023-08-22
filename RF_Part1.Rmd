@@ -1,0 +1,93 @@
+---
+title: "RF-Part1"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+setwd("F:/All Files/Great Learning/All Courses/3-Data Mining")
+
+```
+
+
+```{r}
+tget.train = read.csv("(RF)trainSample.csv", sep=",", header=TRUE)
+tget.train$Target = as.factor(tget.train$Target)
+print(tget.train)
+nrow(tget.train)
+print(sum(tget.train$Target=="1")/nrow(tget.train))
+
+```
+```{r}
+library(randomForest)
+seed=1000
+set.seed(seed)
+rndForest = randomForest(Target ~ . , data = tget.train[,-1], ntree=501, mtry=3, nodesize=10 , importance = TRUE)
+print(rndForest)
+
+```
+
+```{r}
+print(rndForest$err.rate)
+      
+
+```
+
+```{r}
+plot(rndForest)
+  
+```
+```{r}
+
+importance(rndForest)
+
+
+```
+
+```{r}
+set.seed(seed)
+
+tRndForest = tuneRF( x = tget.train[,-c(1:2)],y=tget.train$Target, mtryStart = 3, stepFactor = 1.5,ntreeTry = 51,improve = 0.0001,nodesize=100,trace=TRUE, plot=TRUE, doBest=TRUE, importance=TRUE)
+
+
+```
+```{r}
+tget.train$predict.class = predict(tRndForest,tget.train,type="class")
+tget.train$prob1 = predict(tRndForest,tget.train,type="prob")[,"1"]
+tbl = table(tget.train$Target,tget.train$predict.class)
+print((tbl[1,2]+tbl[2,1])/14000)
+```
+
+```{r}
+qs = quantile(tget.train$prob1,prob=seq(0,1,length=11))
+print(qs)
+
+
+
+```
+
+```{r}
+threshold = qs[10]
+mean(tget.train$Target[tget.train$prob1>threshold]=="1")
+
+```
+
+```{r}
+tget.test = read.csv("(RF)testSample.csv", sep=",", header=TRUE)
+tget.test$Target = as.factor(tget.test$Target)
+nrow(tget.test)
+tget.test$predict.class = predict(tRndForest,tget.test,type="class")
+tget.test$prob1 = predict(tRndForest,tget.test,type="prob")[,"1"]
+head(tget.test)
+
+```
+```{r}
+tbl = table(tget.test$Target,tget.test$predict.class)
+print((tbl[1,2]+tbl[2,1])/6000)
+mean(tget.test$Target[tget.test$prob1>threshold]=="1")
+          
+  
+
+```
+

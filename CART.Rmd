@@ -1,0 +1,81 @@
+---
+title: "CART"
+author: "Yashaswi"
+date: "September 19, 2019"
+output: html_document
+---
+
+```{r include=FALSE}
+
+setwd(":/All Files/Great Learning/All Courses/3-Data Mining")
+
+```
+
+
+```{r}
+
+trainDS = read.csv("(CART)simpleDTDS.csv",sep=",",header = TRUE)
+trainDS = trainDS[,-1]
+head(trainDS)
+nrow(trainDS)
+sum(trainDS$Y=="Good")/nrow(trainDS)
+
+```
+
+
+
+```{r}
+
+plot(trainDS$X1,trainDS$X2)
+points(trainDS$X1[trainDS$Y=="Good"],trainDS$X2[trainDS$Y=="Good"],col="blue",pch=19)
+points(trainDS$X1[trainDS$Y=="Bad"],trainDS$X2[trainDS$Y=="Bad"],col="red",pch=19)
+
+```
+
+```{r}
+library(rpart)
+library(rpart.plot)
+
+tree = rpart(formula = Y ~ .,data = trainDS , method = "class" , minbucket = 3 , cp = 0)
+
+tree
+
+
+```
+
+
+
+```{r}
+rpart.plot(tree)
+
+
+```
+
+```{r}
+printcp(tree)
+
+
+
+```
+```{r}
+plotcp(tree) 
+
+```
+
+
+```{r}
+ptree = prune(tree,cp = 0.015, "CP")
+printcp(ptree)
+rpart.plot(ptree)
+ptree
+
+```
+
+```{r}
+path.rpart(ptree,c(4:7))
+
+
+
+
+```
+

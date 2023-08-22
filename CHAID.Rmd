@@ -1,0 +1,83 @@
+---
+title: "CHAID"
+author: "Yashaswi"
+date: "September 23, 2019"
+output: html_document
+---
+
+```{r}
+setwd("F:/All Files/Great Learning/All Courses/3-Data Mining")
+
+```
+
+
+```{r}
+dataset= read.csv("(CHAID)ClassTreeSample.csv",sep=",",header = TRUE)
+head(dataset)
+
+
+```
+
+
+
+```{r}
+nrow(dataset)
+sum(dataset$Target)/nrow(dataset)
+
+
+
+```
+```{r}
+
+dataset$Target = as.factor(dataset$Target)
+dataset$Holding_Period = as.factor(dataset$Holding_Period)
+head(dataset)
+
+```
+```{r}
+tab = table(dataset$Occupation,dataset$Target)
+print(tab)
+chisq.test(tab)
+
+tab = table(dataset$Gender,dataset$Target)
+print(tab)
+chisq.test(tab)
+
+tab = table(dataset$Holding_Period,dataset$Target)
+print(tab)
+chisq.test(tab)
+
+
+```
+
+```{r}
+install.packages("CHAID",repos= "http://R-Forge.R-project.org")
+
+
+
+          
+```
+
+```{r}
+library(CHAID)
+```
+
+```{r}
+chaid.ctrl = chaid_control(minbucket = 30, minsplit = 100, alpha2 = 0.05, alpha4 = 0.05)
+tree= chaid(Target ~ Holding_Period+Occupation+Gender, data=dataset, control = chaid.ctrl)
+plot(tree)
+
+```
+
+```{r}
+print(tree)
+
+```
+```{r}
+stree = chaid(Target ~ AGE_BKT+Gender, data=dataset, control=chaid.ctrl)
+print(stree)
+plot(stree)
+
+```
+
+

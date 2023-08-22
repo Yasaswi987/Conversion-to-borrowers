@@ -1,0 +1,80 @@
+---
+title: "Kmeans"
+author: "Yashaswi"
+date: "September 17, 2019"
+output: html_document
+---
+```{r include=FALSE}
+
+setwd("F:/All Files/Great Learning/All Courses/3-Data Mining")
+
+````
+
+
+```{r}
+custSpendData = read.csv("Cust_Spend_Data.csv",header=TRUE)
+
+print(custSpendData)
+
+custSpendData.Scaled = scale(custSpendData[,3:7])
+
+print(custSpendData.Scaled)
+
+````
+
+
+```{r} 
+
+seed=1000
+
+set.seed(seed)
+
+clust2= kmeans(x=custSpendData.Scaled, centers = 2, nstart = 5)
+
+print(clust2)
+
+``` 
+
+
+```{r}
+library(cluster)
+
+clusplot(custSpendData.Scaled,clust2$cluster,color=TRUE,shade=TRUE,label=2,lines=1)
+
+```
+
+
+
+```{r}
+
+totWss = rep(0,5)
+
+for(k in 1:5){
+  
+  set.seed(seed)
+  
+  clust = kmeans(x=custSpendData.Scaled, centers = k, nstart = 5)
+  
+  totWss[k]= clust$tot.withinss
+  
+}
+print(totWss)
+
+plot(c(1:5),totWss,type="b")
+```
+
+
+```{r}
+library(NbClust)
+
+set.seed(seed)
+
+nc = NbClust(custSpendData[,c(-1,-2)], min.nc=2, max.nc=5, method="kmeans")
+
+table(nc$Best.n[1,])
+
+```
+
+
+
+````
